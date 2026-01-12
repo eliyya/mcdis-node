@@ -1,0 +1,38 @@
+{
+    "name": "mcdis",
+    "version": "1.0.0",
+    "description": "mcdis is a node-based application that allows you to stream a Minecraft server console to Discord, enabling remote and efficient server management through a Discord bot. inspired by McDis-RCON",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eliyya/mcdis-node.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "type": "module",
+    "bugs": {
+        "url": "https://github.com/eliyya/mcdis-node/issues"
+    },
+    "homepage": "https://github.com/eliyya/mcdis-node#readme",
+    "engines": {
+        "node": ">=24"
+    },
+    "devDependencies": {
+        "@types/node": "25.0.6",
+        "typescript": "5.9.3",
+        "@eslint/js": "9.39.2",
+        "@eslint/json": "0.14.0",
+        "eslint": "9.39.2",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-import": "2.32.0",
+        "globals": "17.0.0",
+        "typescript-eslint": "8.51.0"
+    },
+    "dependencies": {
+        "discord.js": "14.25.1"
+    }
+}
