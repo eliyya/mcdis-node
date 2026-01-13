@@ -2,8 +2,9 @@ node_modules
 AGENTS.md
 flow.md
 GUIDE.en.md
-GUIDE.en.md
+GUIDE.es.md
 MANIFEST.in
 README.es.md
 setup.py
 mcdis_rconS
+config.json
