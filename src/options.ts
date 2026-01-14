@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, mkdir } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import { logger } from './logger.ts'
 import { homedir } from 'node:os'
@@ -12,9 +12,20 @@ const optionsSchema = z.object({
                 'El "DISCORD_TOKEN" es necesario'
             :   'El "DISCORD_TOKEN" debe ser un texto',
     }),
+    servers: z.array(
+        z.object({
+            name: z.string().min(1, { error: 'Coloca un nombre al servidor' }),
+            start: z.string().min(1, {
+                error: 'Coloca un comando para iniciar el servidor',
+            }),
+            end: z.string().min(1, {
+                error: 'Coloca un comando para finalizar el servidor',
+            }),
+        }),
+    ),
 })
 
-type Options = z.output<typeof optionsSchema>
+export type McDisOptions = z.output<typeof optionsSchema>
 
 const {
     values: { config: configArg },
@@ -30,6 +41,10 @@ const {
 })
 
 let dataConfig = ''
+
+try {
+    await mkdir(join(homedir(), '.mcdis'), { recursive: true })
+} catch (error) {}
 
 try {
     dataConfig = await readFile(configArg, { encoding: 'utf-8' })
