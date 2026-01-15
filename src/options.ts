@@ -1,17 +1,14 @@
-import { readFile, mkdir } from 'node:fs/promises'
+import { readFile, mkdir, access } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import { logger } from './logger.ts'
 import { homedir } from 'node:os'
-import { join } from 'node:path'
+import { join, normalize } from 'node:path'
 import * as z from 'zod'
 
 const optionsSchema = z.object({
-    DISCORD_TOKEN: z.string({
-        error: issue =>
-            typeof issue === 'undefined' ?
-                'El "DISCORD_TOKEN" es necesario'
-            :   'El "DISCORD_TOKEN" debe ser un texto',
-    }),
+    DISCORD_TOKEN: z
+        .string()
+        .min(1, { error: 'El "DISCORD_TOKEN" es necesario' }),
     servers: z.array(
         z.object({
             name: z.string().min(1, { error: 'Coloca un nombre al servidor' }),
@@ -21,6 +18,22 @@ const optionsSchema = z.object({
             end: z.string().min(1, {
                 error: 'Coloca un comando para finalizar el servidor',
             }),
+            path: z
+                .string()
+                .min(1)
+                .refine(
+                    async value => {
+                        try {
+                            await access(value)
+                            return true
+                        } catch {
+                            return false
+                        }
+                    },
+                    {
+                        message: 'Ruta no accesible',
+                    },
+                ),
         }),
     ),
 })

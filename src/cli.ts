@@ -28,8 +28,11 @@ const client = await new Promise<McDisClient>(res => {
             GatewayIntentBits.GuildMessagePolls |
             GatewayIntentBits.DirectMessagePolls,
     })
-    client.on(Events.ClientReady, client => res(client as McDisClient))
-    client.login(config.DISCORD_TOKEN)
+    client.on(Events.ClientReady, () => {
+        if (import.meta.main) {
+            client.startServers()
+        }
+        res(client)
+    })
+    client.discord.login(config.DISCORD_TOKEN)
 })
-
-client.startServers()
