@@ -2,13 +2,16 @@ import { readFile, mkdir, access } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import { logger } from './logger.ts'
 import { homedir } from 'node:os'
-import { join, normalize } from 'node:path'
+import { join } from 'node:path'
 import * as z from 'zod'
 
 const optionsSchema = z.object({
-    DISCORD_TOKEN: z
+    discord_token: z
         .string()
-        .min(1, { error: 'El "DISCORD_TOKEN" es necesario' }),
+        .min(1, { error: 'El "discord_token" es necesario' }),
+    guild_id: z.string().min(1, {
+        error: 'El "guild_id" es necesario',
+    }),
     servers: z.array(
         z.object({
             name: z.string().min(1, { error: 'Coloca un nombre al servidor' }),
@@ -34,6 +37,9 @@ const optionsSchema = z.object({
                         message: 'Ruta no accesible',
                     },
                 ),
+            console_channel: z.string().min(1, {
+                error: 'Debes incluir el id del canal de discord',
+            }),
         }),
     ),
 })

@@ -34,5 +34,5 @@ const client = await new Promise<McDisClient>(res => {
         }
         res(client)
     })
-    client.discord.login(config.DISCORD_TOKEN)
+    client.discord.login(config.discord_token)
 })
