@@ -37,9 +37,7 @@ const optionsSchema = z.object({
                         message: 'Ruta no accesible',
                     },
                 ),
-            console_channel: z.string().min(1, {
-                error: 'Debes incluir el id del canal de discord',
-            }),
+            prefix: z.string().default('!'),
         }),
     ),
 })
@@ -63,7 +61,7 @@ let dataConfig = ''
 
 try {
     await mkdir(join(homedir(), '.mcdis'), { recursive: true })
-} catch (error) {}
+} catch (error) { }
 
 try {
     dataConfig = await readFile(configArg, { encoding: 'utf-8' })

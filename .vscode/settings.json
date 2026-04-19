@@ -25,11 +25,14 @@
         "editor.defaultFormatter": "prettier.prettier-vscode"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "prettier.prettier-vscode"
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "[python]": {
         "editor.defaultFormatter": "geecode.geecode-python"
     },
-    "cSpell.words": ["mcdis"]
+    "cSpell.words": [
+        "mcdis"
+    ],
+    "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }
