@@ -69,6 +69,7 @@ export class McDisClient extends EventEmitter<ClientEvents> {
                 new Process({
                     name,
                     ...conf,
+                    prefix: conf.prefix ?? this.#prefix ?? '!',
                     client: this,
                 }),
             )
