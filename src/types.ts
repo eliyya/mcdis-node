@@ -1,6 +1,5 @@
-import type { McDisClient } from "./classes/client.ts"
-import type { McDisOptions } from "./options.ts"
-import { McDisEvents } from "./classes/client.ts"
+import type { McDisClient } from './classes/client.ts'
+import type { McDisOptions } from './options.ts'
 
 type McDisOptionsSever = McDisOptions['servers'][number]
 
@@ -20,7 +19,9 @@ export interface Process<ON extends boolean = boolean> {
     readonly plugins: Object[]
     isOn(): this is Process<true>
     isOff(): this is Process<false>
-    start(): Promise<void>
+    start(): void
+    stop(): void
+    kill(): void
 }
 
 export interface McChunk {

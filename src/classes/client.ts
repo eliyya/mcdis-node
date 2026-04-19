@@ -1,60 +1,27 @@
-import { EventEmitter } from "node:events"
+import { EventEmitter } from 'node:events'
 import {
     Client as DiscordClient,
     type ClientOptions as DiscordClientOptions,
-    type ClientEvents as DiscordClientEvents,
-    Events as DiscordEvents,
 } from 'discord.js'
 
-import type { McDisOptions } from "../options.ts"
-import { spawn } from 'node-pty'
-import type { McChunk, ServerOptions } from "../types.ts"
-import { Process } from "./process.ts"
-
-const CustomEvents = {
-    McChunk: 'mcChunk',
-} as const
-
-const DiscordEventsMaped = Object.fromEntries(
-    Object.entries(DiscordEvents).map(([k, v]) => [
-        'Discord' + k[0]!.toUpperCase() + k.substring(1),
-        'discord' + v[0]!.toUpperCase() + v.substring(1),
-    ]),
-) as EventsMap<DiscordEvents>
-
-export const McDisEvents = {
-    ...CustomEvents,
-    ...DiscordEvents,
-} as unknown as typeof DiscordEventsMaped & typeof CustomEvents
-
-export type McDisEvents = (typeof McDisEvents)[keyof typeof McDisEvents]
+import type { McDisOptions } from '../options.ts'
+import { Process } from './process.ts'
+import { DiscordEventsStrings, type ClientEvents } from '../events.ts'
 
 type If<Value extends boolean, TrueResult, FalseResult = null> =
     Value extends true ? TrueResult
     : Value extends false ? FalseResult
     : TrueResult | FalseResult
 
-type EventsMap<T extends string> = {
-    readonly [K in T as `Discord${Capitalize<`${K}`>}`]: `discord${Capitalize<`${K}`>}`
-}
-
-type PrefixDiscord<T> = {
-    [K in keyof T as `discord${Capitalize<string & K>}`]: T[K]
-}
-
-export type ClientEvents = PrefixDiscord<DiscordClientEvents> & {
-    [McDisEvents.McChunk]: [chunk: McChunk]
-}
-
-const DiscordEventsStrings: (string | Symbol)[] = Object.values(
-    DiscordEvents,
-).map(ev => `discord${ev[0]?.toUpperCase()}${ev.substring(1)}`)
-
 type ServerName = string
 
 export class McDisClient extends EventEmitter<ClientEvents> {
-    servers = new Map<ServerName, Process>()
+    processes = new Map<ServerName, Process>()
     #discord: DiscordClient<true>
+    #prefix = '!'
+    #path = process.cwd()
+    #config: Record<string, string> = {}
+    #addons = new Set<object>()
 
     get discord() {
         return this.#discord
@@ -72,14 +39,16 @@ export class McDisClient extends EventEmitter<ClientEvents> {
          */
         this.#discord = new DiscordClient<true>(options)
         this.on('newListener', (event, listener) => {
-            if (DiscordEventsStrings.includes(event)) {
+            if (typeof event !== 'string') return
+            if ((DiscordEventsStrings as string[]).includes(event)) {
                 let ev = event.toString().replace('discord', '')
                 ev = ev[0]!.toLocaleLowerCase() + ev.substring(1)
                 this.#discord.on(ev, listener)
             }
         })
         this.on('removeListener', (event, listener) => {
-            if (DiscordEventsStrings.includes(event)) {
+            if (typeof event !== 'string') return
+            if ((DiscordEventsStrings as string[]).includes(event)) {
                 let ev = event.toString().replace('discord', '')
                 ev = ev[0]!.toLocaleLowerCase() + ev.substring(1)
                 this.#discord.off(event, listener)
@@ -97,7 +66,7 @@ export class McDisClient extends EventEmitter<ClientEvents> {
                 )
                 continue
             }
-            this.servers.set(
+            this.processes.set(
                 name,
                 new Process({
                     name,
@@ -110,7 +79,7 @@ export class McDisClient extends EventEmitter<ClientEvents> {
     }
 
     startServers() {
-        for (const server of this.servers.values()) {
+        for (const server of this.processes.values()) {
             server.start()
         }
     }

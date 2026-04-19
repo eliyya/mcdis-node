@@ -1,10 +1,11 @@
 import { spawn } from 'node-pty'
-import { McDisEvents, type McDisClient } from './client.ts'
+import { type McDisClient } from './client.ts'
 import type { Process as ProcesInterface, ServerOptions } from '../types.ts'
 import { join } from 'node:path'
 import { mkdir } from 'node:fs/promises'
 import { McChunk } from './mc-chunk.ts'
 import { splitTextByLimit } from '../utils.ts'
+import { McDisEvents } from '../events.ts'
 
 export class Process<
     ON extends boolean = boolean,
@@ -83,21 +84,21 @@ export class Process<
         return this.#isOn
     }
 
-    async start() {
+    start() {
         const [f, ...r] = this.#startCommand.split(/\s+/)
         if (typeof f === 'undefined') {
             console.log(
                 `el proceso "${this.#name}" no tiene configurado un "start", será omitido`,
             )
-            return void this.#client.servers.delete(this.name)
+            return void this.#client.processes.delete(this.name)
         }
-        const process = spawn(f, r, {
+        this.#process = spawn(f, r, {
             name: 'xterm-color',
             cwd: this.#path,
         })
 
         this.#isOn = true
-        process.onData(chunk => {
+        this.#process.onData(chunk => {
             this.#client.emit(McDisEvents.McChunk, new McChunk(chunk, this))
             this.#queue.push(chunk)
         })
@@ -110,9 +111,17 @@ export class Process<
             // this.#client.log('```sh\n' + chunk + '\n```')
         }, 1_000)
 
-        process.onExit(e => {
+        this.#process.onExit(e => {
             this.#isOn = false
             clearInterval(interval)
         })
+    }
+
+    stop() {
+        this.#process?.write(`${this.#endCommand}\n`)
+    }
+
+    kill() {
+        this.#process?.kill()
     }
 }

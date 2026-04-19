@@ -8,7 +8,8 @@ import * as z from 'zod'
 const optionsSchema = z.object({
     discord_token: z
         .string()
-        .min(1, { error: 'El "discord_token" es necesario' }),
+        .min(1, { error: 'El "discord_token" es necesario' })
+        .default(process.env.MCDIS_DISCORD_TOKEN ?? ''),
     guild_id: z.string().min(1, {
         error: 'El "guild_id" es necesario',
     }),
@@ -61,7 +62,7 @@ let dataConfig = ''
 
 try {
     await mkdir(join(homedir(), '.mcdis'), { recursive: true })
-} catch (error) { }
+} catch (error) {}
 
 try {
     dataConfig = await readFile(configArg, { encoding: 'utf-8' })

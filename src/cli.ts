@@ -1,5 +1,5 @@
 import { Events, GatewayIntentBits } from 'discord.js'
-import { McDisClient } from './client.ts'
+import { McDisClient } from './classes/client.ts'
 import { config } from './options.ts'
 
 const client = await new Promise<McDisClient>(res => {
@@ -28,11 +28,13 @@ const client = await new Promise<McDisClient>(res => {
             GatewayIntentBits.GuildMessagePolls |
             GatewayIntentBits.DirectMessagePolls,
     })
+
     client.on(Events.ClientReady, () => {
         if (import.meta.main) {
             client.startServers()
         }
         res(client)
     })
+
     client.discord.login(config.discord_token)
 })

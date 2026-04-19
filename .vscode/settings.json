@@ -1,7 +1,5 @@
 {
-    "WillLuke.nextjs.addTypesOnSave": true,
-    "WillLuke.nextjs.hasPrompted": true,
-    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "css.lint.unknownAtRules": "ignore",
@@ -15,24 +13,14 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "always"
     },
-    "[prisma]": {
-        "editor.defaultFormatter": "Prisma.prisma"
-    },
     "[jsonc]": {
-        "editor.defaultFormatter": "prettier.prettier-vscode"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[json]": {
-        "editor.defaultFormatter": "prettier.prettier-vscode"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "typescript.tsdk": "node_modules\\typescript\\lib",
-    "[python]": {
-        "editor.defaultFormatter": "geecode.geecode-python"
-    },
-    "cSpell.words": [
-        "mcdis"
-    ],
     "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }
