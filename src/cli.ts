@@ -4,6 +4,7 @@ import { config } from './options.ts'
 
 const client = await new Promise<McDisClient>(res => {
     const client = new McDisClient({
+        prefix: config.prefix ?? '!',
         servers: config.servers,
         intents:
             GatewayIntentBits.Guilds |

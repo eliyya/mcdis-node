@@ -8,11 +8,6 @@ import type { McDisOptions } from '../options.ts'
 import { Process } from './process.ts'
 import { DiscordEventsStrings, type ClientEvents } from '../events.ts'
 
-type If<Value extends boolean, TrueResult, FalseResult = null> =
-    Value extends true ? TrueResult
-    : Value extends false ? FalseResult
-    : TrueResult | FalseResult
-
 type ServerName = string
 
 export class McDisClient extends EventEmitter<ClientEvents> {
@@ -29,11 +24,14 @@ export class McDisClient extends EventEmitter<ClientEvents> {
 
     constructor({
         servers,
+        prefix,
         ...options
     }: DiscordClientOptions & {
         servers: McDisOptions['servers']
+        prefix: McDisOptions['prefix']
     }) {
         super()
+        this.#prefix = prefix ?? '!'
         /**
          * DISCORD SETUP
          */
@@ -56,13 +54,13 @@ export class McDisClient extends EventEmitter<ClientEvents> {
         })
 
         /**
-         * SERVER SETUPS
+         * PROCESS SETUPS
          */
         const names = new Set<string>()
         for (const { name, ...conf } of servers) {
             if (names.has(name)) {
                 console.log(
-                    `Existe más de un servidor "${name}", sólo será cargado uno`,
+                    `Existe más de un proceso "${name}", sólo será cargado uno`,
                 )
                 continue
             }

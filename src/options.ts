@@ -6,13 +6,11 @@ import { join } from 'node:path'
 import * as z from 'zod'
 
 const optionsSchema = z.object({
-    discord_token: z
-        .string()
-        .min(1, { error: 'El "discord_token" es necesario' })
-        .default(process.env.MCDIS_DISCORD_TOKEN ?? ''),
+    discord_token: z.string().default(process.env.MCDIS_DISCORD_TOKEN ?? ''),
     guild_id: z.string().min(1, {
         error: 'El "guild_id" es necesario',
     }),
+    prefix: z.string().default('!'),
     servers: z.array(
         z.object({
             name: z.string().min(1, { error: 'Coloca un nombre al servidor' }),
