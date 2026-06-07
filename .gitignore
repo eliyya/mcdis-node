@@ -1,10 +1,5 @@
-node_modules
-AGENTS.md
-flow.md
-GUIDE.en.md
-GUIDE.es.md
-MANIFEST.in
-README.es.md
-setup.py
-mcdis_rcon
-config.json
+node_modules/
+dist/
+.env
+*.log
+.mcdis-backups/

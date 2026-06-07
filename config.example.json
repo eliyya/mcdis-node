@@ -1,0 +1,41 @@
+{
+  "$schema": "./docs/schema/config.schema.json",
+  "discord": {
+    "tokenEnv": "DISCORD_TOKEN",
+    "panelChannelId": "123456789012345678",
+    "prefix": "!!",
+    "queue": {
+      "minIntervalMs": 1200,
+      "maxQueuedMessages": 1000,
+      "codeBlockLanguage": "md"
+    }
+  },
+  "mods": {
+    "enabled": true,
+    "directory": ".mdmods"
+  },
+  "processes": {
+    "smp": {
+      "type": "server",
+      "startCommand": "java -Xms1G -Xmx1G -Dfile.encoding=UTF-8 -jar paper.jar nogui",
+      "stopCommand": "stop",
+      "autoStart": false,
+      "blacklist": ["Preparing spawn area"],
+      "plugins": {
+        "enabled": true,
+        "directory": ".mdplugins"
+      }
+    },
+    "velocity": {
+      "type": "network",
+      "startCommand": "java -Xms512M -Xmx512M -jar velocity.jar",
+      "stopCommand": "end",
+      "autoStart": false,
+      "blacklist": [],
+      "plugins": {
+        "enabled": true,
+        "directory": ".mdplugins"
+      }
+    }
+  }
+}
