@@ -21,30 +21,30 @@ config.json
 CLI:
 
 ```sh
-npm start -- --config config.json
-npm start -- -c config.json
+pnpm start -- --config config.json
+pnpm start -- -c config.json
 ```
 
 Forma minima:
 
 ```json
 {
-  "discord": {
-    "tokenEnv": "DISCORD_TOKEN",
-    "panelChannelId": "123456789012345678",
-    "prefix": "!!"
-  },
-  "mods": {
-    "enabled": true,
-    "directory": ".mdmods"
-  },
-  "processes": {
-    "smp": {
-      "type": "server",
-      "startCommand": "java -Xms1G -Xmx1G -jar paper.jar nogui",
-      "stopCommand": "stop"
-    }
-  }
+	"discord": {
+		"tokenEnv": "DISCORD_TOKEN",
+		"panelChannelId": "123456789012345678",
+		"prefix": "!!"
+	},
+	"mods": {
+		"enabled": true,
+		"directory": ".mdmods"
+	},
+	"processes": {
+		"smp": {
+			"type": "server",
+			"startCommand": "java -Xms1G -Xmx1G -jar paper.jar nogui",
+			"stopCommand": "stop"
+		}
+	}
 }
 ```
 
@@ -52,24 +52,24 @@ Forma minima:
 
 ```ts
 type DiscordConfig = {
-  tokenEnv?: string; // default: "DISCORD_TOKEN"
-  panelChannelId: string;
-  prefix?: string; // default: "!!"
-  queue?: {
-    minIntervalMs?: number; // default: 1200
-    maxQueuedMessages?: number; // default: 1000
-    codeBlockLanguage?: string; // default: "md"
-  };
-};
+	tokenEnv?: string // default: "DISCORD_TOKEN"
+	panelChannelId: string
+	prefix?: string // default: "!!"
+	queue?: {
+		minIntervalMs?: number // default: 1200
+		maxQueuedMessages?: number // default: 1000
+		codeBlockLanguage?: string // default: "md"
+	}
+}
 ```
 
 ### `mods`
 
 ```ts
 type ModsConfig = {
-  enabled?: boolean; // default: true
-  directory?: string; // default: ".mdmods"
-};
+	enabled?: boolean // default: true
+	directory?: string // default: ".mdmods"
+}
 ```
 
 ### `processes`
@@ -78,28 +78,28 @@ type ModsConfig = {
 
 ```ts
 type ProcessConfig = {
-  type?: 'server' | 'network'; // default: "server"
-  cwd?: string; // default: nombre del proceso
-  startCommand: string | string[];
-  stopCommand?: string; // default: "stop"
-  autoStart?: boolean; // default: false
-  blacklist?: string[]; // default: []
-  plugins?: {
-    enabled?: boolean; // default: true
-    directory?: string; // default: ".mdplugins"
-  };
-};
+	type?: 'server' | 'network' // default: "server"
+	cwd?: string // default: nombre del proceso
+	startCommand: string | string[]
+	stopCommand?: string // default: "stop"
+	autoStart?: boolean // default: false
+	blacklist?: string[] // default: []
+	plugins?: {
+		enabled?: boolean // default: true
+		directory?: string // default: ".mdplugins"
+	}
+}
 ```
 
 Si `cwd` no existe en config, McDis usa el nombre del proceso:
 
 ```json
 {
-  "processes": {
-    "smp": {
-      "startCommand": "java -jar paper.jar nogui"
-    }
-  }
+	"processes": {
+		"smp": {
+			"startCommand": "java -jar paper.jar nogui"
+		}
+	}
 }
 ```
 
@@ -113,8 +113,8 @@ plugins: "smp/.mdplugins"
 ## Exports Publicos
 
 ```ts
-import { Plugin, type PluginContext, type MinecraftProcess } from 'mcdis-node-recreation/plugin';
-import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
+import { Plugin, type PluginContext, type MinecraftProcess } from 'mcdis-node-recreation/plugin'
+import { Mod, type ModContext } from 'mcdis-node-recreation/mod'
 ```
 
 ## McDisApp
@@ -125,10 +125,10 @@ Propiedades publicas:
 
 ```ts
 class McDisApp extends EventEmitter {
-  readonly config: AppConfig;
-  readonly client: Client<true>;
-  readonly queue: DiscordMessageQueue;
-  readonly threadManager: ThreadManager;
+	readonly config: AppConfig
+	readonly client: Client<true>
+	readonly queue: DiscordMessageQueue
+	readonly threadManager: ThreadManager
 }
 ```
 
@@ -142,8 +142,8 @@ app.getProcesses(): MinecraftProcess[]
 Ejemplo:
 
 ```ts
-const smp = this.app.getProcess('smp');
-smp?.execute('say hola');
+const smp = this.app.getProcess('smp')
+smp?.execute('say hola')
 ```
 
 ### Registrar Plugins Desde Mods
@@ -152,44 +152,44 @@ Por archivo en un proceso:
 
 ```ts
 const unregister = await app.registerProcessPlugin({
-  processName: 'smp',
-  file: '/abs/path/to/plugin.ts',
-  name: 'my-plugin'
-});
+	processName: 'smp',
+	file: '/abs/path/to/plugin.ts',
+	name: 'my-plugin',
+})
 
-await unregister();
+await unregister()
 ```
 
 Por archivo en varios procesos:
 
 ```ts
 const unregister = await app.registerProcessPluginForMany({
-  processNames: ['smp', 'velocity'],
-  file: '/abs/path/to/plugin.ts',
-  name: 'shared-plugin'
-});
+	processNames: ['smp', 'velocity'],
+	file: '/abs/path/to/plugin.ts',
+	name: 'shared-plugin',
+})
 ```
 
 Si `processNames` se omite, registra en todos los procesos:
 
 ```ts
 const unregister = await app.registerProcessPluginForMany({
-  file: '/abs/path/to/plugin.ts',
-  name: 'shared-plugin'
-});
+	file: '/abs/path/to/plugin.ts',
+	name: 'shared-plugin',
+})
 ```
 
 Inyectando una instancia en un proceso:
 
 ```ts
-const process = app.getProcess('smp');
+const process = app.getProcess('smp')
 if (process) {
-  const plugin = new MyPlugin(process.createPluginContext());
-  const unregister = await app.registerProcessPlugin({
-    processName: 'smp',
-    plugin,
-    name: plugin.name
-  });
+	const plugin = new MyPlugin(process.createPluginContext())
+	const unregister = await app.registerProcessPlugin({
+		processName: 'smp',
+		plugin,
+		name: plugin.name,
+	})
 }
 ```
 
@@ -197,23 +197,23 @@ Inyectando por factory en varios procesos:
 
 ```ts
 const unregister = await app.registerProcessPluginForMany({
-  plugin: (context) => new MyPlugin(context),
-  name: 'my-plugin'
-});
+	plugin: (context) => new MyPlugin(context),
+	name: 'my-plugin',
+})
 ```
 
 Para reloads de mods, registra dentro de `onLoad()` y guarda el cleanup:
 
 ```ts
 class MyMod extends Mod {
-  async onLoad() {
-    const unregister = await this.app.registerProcessPluginForMany({
-      plugin: (context) => new MyPlugin(context),
-      name: 'my-plugin'
-    });
+	async onLoad() {
+		const unregister = await this.app.registerProcessPluginForMany({
+			plugin: (context) => new MyPlugin(context),
+			name: 'my-plugin',
+		})
 
-    this.addCleanup(unregister);
-  }
+		this.addCleanup(unregister)
+	}
 }
 ```
 
@@ -231,25 +231,25 @@ Registrar:
 
 ```ts
 type BroadcastHelper = {
-  broadcast(message: string): void;
-};
+	broadcast(message: string): void
+}
 
 const unregister = this.app.registerHelper<BroadcastHelper>('broadcast', {
-  broadcast: (message) => {
-    for (const process of this.app.getProcesses()) {
-      process.execute(`say ${message}`);
-    }
-  }
-});
+	broadcast: (message) => {
+		for (const process of this.app.getProcesses()) {
+			process.execute(`say ${message}`)
+		}
+	},
+})
 
-this.addCleanup(unregister);
+this.addCleanup(unregister)
 ```
 
 Consumir desde un plugin o mod:
 
 ```ts
-const broadcast = this.app.getHelper<BroadcastHelper>('broadcast');
-broadcast?.broadcast('Mensaje global');
+const broadcast = this.app.getHelper<BroadcastHelper>('broadcast')
+broadcast?.broadcast('Mensaje global')
 ```
 
 ### Otros Metodos
@@ -268,7 +268,7 @@ Propiedades:
 
 ```ts
 process.name: string
-process.config: ManagedProcessConfig
+process.config: ProcessConfig
 process.app: McDisApp
 process.isRunning: boolean
 process.cwd: string
@@ -294,9 +294,9 @@ process.registerPluginSource(source: RegisteredPluginSource): Promise<() => Prom
 Ejemplo:
 
 ```ts
-const process = this.app.getProcess('smp');
-await process?.start();
-process?.execute('say hola');
+const process = this.app.getProcess('smp')
+await process?.start()
+process?.execute('say hola')
 ```
 
 ## Plugins
@@ -325,9 +325,9 @@ smp/.mdplugins/welcome/
 
 ```json
 {
-  "name": "welcome",
-  "type": "module",
-  "main": "./src/index.ts"
+	"name": "welcome",
+	"type": "module",
+	"main": "./src/index.ts"
 }
 ```
 
@@ -348,36 +348,36 @@ index.cjs
 
 ```ts
 type PluginContext = {
-  name: string;
-  cwd: string;
-  prefix: string;
-  app: McDisApp;
-  process: MinecraftProcess;
-  getStatus: () => string;
-  execute: (command: string) => void;
-  sendLog: (message: string) => void;
-};
+	name: string
+	cwd: string
+	prefix: string
+	app: McDisApp
+	process: MinecraftProcess
+	getStatus: () => string
+	execute: (command: string) => void
+	sendLog: (message: string) => void
+}
 ```
 
 ### Clase Plugin
 
 ```ts
 abstract class Plugin {
-  name = this.constructor.name;
+	name = this.constructor.name
 
-  protected get process(): MinecraftProcess;
-  protected get app(): McDisApp;
+	protected get process(): MinecraftProcess
+	protected get app(): McDisApp
 
-  protected listen(eventName: string | symbol, listener: (...args: unknown[]) => void): void;
-  protected once(eventName: string | symbol, listener: (...args: unknown[]) => void): void;
-  cleanup(): Promise<void>;
+	protected listen(eventName: string | symbol, listener: (...args: unknown[]) => void): void
+	protected once(eventName: string | symbol, listener: (...args: unknown[]) => void): void
+	cleanup(): Promise<void>
 
-  onLoad(): Promise<void>;
-  onUnload(): Promise<void>;
-  onStart(): Promise<void>;
-  onStop(): Promise<void>;
-  onConsoleLine(line: string): Promise<void>;
-  onDiscordMessage(message: Message, command: string): Promise<boolean | void>;
+	onLoad(): Promise<void>
+	onUnload(): Promise<void>
+	onStart(): Promise<void>
+	onStop(): Promise<void>
+	onConsoleLine(line: string): Promise<void>
+	onDiscordMessage(message: Message, command: string): Promise<boolean | void>
 }
 ```
 
@@ -394,32 +394,32 @@ export async function load(context: PluginContext): Promise<Plugin>
 Ejemplo:
 
 ```ts
-import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
-import type { Message } from 'discord.js';
+import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin'
+import type { Message } from 'discord.js'
 
 class AutoSavePlugin extends Plugin {
-  name = 'auto-save';
+	name = 'auto-save'
 
-  async onLoad() {
-    this.context.sendLog('auto-save loaded');
-  }
+	async onLoad() {
+		this.context.sendLog('auto-save loaded')
+	}
 
-  async onConsoleLine(line: string) {
-    if (line.includes('Done')) {
-      this.context.execute('save-on');
-    }
-  }
+	async onConsoleLine(line: string) {
+		if (line.includes('Done')) {
+			this.context.execute('save-on')
+		}
+	}
 
-  async onDiscordMessage(_message: Message, command: string) {
-    if (command === 'save-now') {
-      this.context.execute('save-all flush');
-      return true;
-    }
-  }
+	async onDiscordMessage(_message: Message, command: string) {
+		if (command === 'save-now') {
+			this.context.execute('save-all flush')
+			return true
+		}
+	}
 }
 
 export async function load(context: PluginContext) {
-  return new AutoSavePlugin(context);
+	return new AutoSavePlugin(context)
 }
 ```
 
@@ -449,9 +449,9 @@ O directorios:
 
 ```json
 {
-  "name": "coordinator",
-  "type": "module",
-  "main": "./src/index.ts"
+	"name": "coordinator",
+	"type": "module",
+	"main": "./src/index.ts"
 }
 ```
 
@@ -472,30 +472,30 @@ index.cjs
 
 ```ts
 type ModContext = {
-  app: McDisApp;
-  prefix: string;
-  sendLog: (message: string) => void;
-};
+	app: McDisApp
+	prefix: string
+	sendLog: (message: string) => void
+}
 ```
 
 ### Clase Mod
 
 ```ts
 abstract class Mod {
-  name = this.constructor.name;
+	name = this.constructor.name
 
-  protected get app(): McDisApp;
+	protected get app(): McDisApp
 
-  protected listen(eventName: string | symbol, listener: (...args: unknown[]) => void): void;
-  protected once(eventName: string | symbol, listener: (...args: unknown[]) => void): void;
-  protected addCleanup(cleanup: () => void | Promise<void>): void;
-  cleanup(): Promise<void>;
+	protected listen(eventName: string | symbol, listener: (...args: unknown[]) => void): void
+	protected once(eventName: string | symbol, listener: (...args: unknown[]) => void): void
+	protected addCleanup(cleanup: () => void | Promise<void>): void
+	cleanup(): Promise<void>
 
-  onLoad(): Promise<void>;
-  onUnload(): Promise<void>;
-  onReady(): Promise<void>;
-  onShutdown(): Promise<void>;
-  onDiscordMessage(message: Message): Promise<boolean | void>;
+	onLoad(): Promise<void>
+	onUnload(): Promise<void>
+	onReady(): Promise<void>
+	onShutdown(): Promise<void>
+	onDiscordMessage(message: Message): Promise<boolean | void>
 }
 ```
 
@@ -513,20 +513,20 @@ export async function load(context: ModContext): Promise<Mod>
 Ejemplo:
 
 ```ts
-import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
+import { Mod, type ModContext } from 'mcdis-node-recreation/mod'
 
 class CoordinatorMod extends Mod {
-  name = 'coordinator';
+	name = 'coordinator'
 
-  async onLoad() {
-    this.listen('process:started', (process) => {
-      this.context.sendLog(`Proceso iniciado: ${process.name}`);
-    });
-  }
+	async onLoad() {
+		this.listen('process:started', (process) => {
+			this.context.sendLog(`Proceso iniciado: ${process.name}`)
+		})
+	}
 }
 
 export async function load(context: ModContext) {
-  return new CoordinatorMod(context);
+	return new CoordinatorMod(context)
 }
 ```
 
@@ -572,8 +572,8 @@ plugin:unloaded
 Puedes crear eventos propios:
 
 ```ts
-this.process.emit('server:ready', { process: this.context.name });
-this.app.emit('cluster:ready');
+this.process.emit('server:ready', { process: this.context.name })
+this.app.emit('cluster:ready')
 ```
 
 ## Comandos Discord
@@ -661,16 +661,15 @@ Patron recomendado:
 
 ```ts
 class MyMod extends Mod {
-  async onLoad() {
-    const unregisterHelper = this.app.registerHelper('x', {});
-    this.addCleanup(unregisterHelper);
+	async onLoad() {
+		const unregisterHelper = this.app.registerHelper('x', {})
+		this.addCleanup(unregisterHelper)
 
-    const unregisterPlugin = await this.app.registerProcessPluginForMany({
-      plugin: (context) => new MyPlugin(context),
-      name: 'my-plugin'
-    });
-    this.addCleanup(unregisterPlugin);
-  }
+		const unregisterPlugin = await this.app.registerProcessPluginForMany({
+			plugin: (context) => new MyPlugin(context),
+			name: 'my-plugin',
+		})
+		this.addCleanup(unregisterPlugin)
+	}
 }
 ```
-

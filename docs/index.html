@@ -1,39 +1,53 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>McDis Node Docs</title>
-    <meta name="description" content="Documentacion de McDis Node: config, plugins, mods, eventos y JSON Schema.">
-    <link rel="stylesheet" href="./styles.css">
-  </head>
-  <body>
-    <header class="topbar">
-      <a class="brand" href="#top">McDis Node</a>
-      <nav>
-        <a href="#config">Config</a>
-        <a href="#plugins">Plugins</a>
-        <a href="#mods">Mods</a>
-        <a href="#events">Eventos</a>
-        <a href="#schema">Schema</a>
-      </nav>
-    </header>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>McDis Node Docs</title>
+		<meta
+			name="description"
+			content="Documentacion de McDis Node: config, plugins, mods, eventos y JSON Schema."
+		/>
+		<link rel="stylesheet" href="./styles.css" />
+	</head>
+	<body>
+		<header class="topbar">
+			<a class="brand" href="#top">McDis Node</a>
+			<nav>
+				<a href="#config">Config</a>
+				<a href="#plugins">Plugins</a>
+				<a href="#mods">Mods</a>
+				<a href="#events">Eventos</a>
+				<a href="#schema">Schema</a>
+			</nav>
+		</header>
 
-    <main id="top">
-      <section class="hero">
-        <p class="eyebrow">Node.js 24 + TypeScript + ESM</p>
-        <h1>McDis Node Documentation</h1>
-        <p class="lead">Gestiona procesos de Minecraft, transmite consolas a Discord, extiende procesos con plugins y coordina todo con mods globales.</p>
-        <div class="actions">
-          <a class="button" href="./schema/config.schema.json">JSON Schema</a>
-          <a class="button secondary" href="https://github.com/mjpr-3435/mcdis-node-recreation">GitHub</a>
-        </div>
-      </section>
+		<main id="top">
+			<section class="hero">
+				<p class="eyebrow">Node.js 24 + TypeScript + ESM</p>
+				<h1>McDis Node Documentation</h1>
+				<p class="lead">
+					Gestiona procesos de Minecraft, transmite consolas a Discord, extiende procesos
+					con plugins y coordina todo con mods globales.
+				</p>
+				<div class="actions">
+					<a class="button" href="./schema/config.schema.json">JSON Schema</a>
+					<a
+						class="button secondary"
+						href="https://github.com/mjpr-3435/mcdis-node-recreation"
+						>GitHub</a
+					>
+				</div>
+			</section>
 
-      <section id="config" class="section">
-        <h2>Configuracion</h2>
-        <p>El archivo default es <code>config.json</code>. La propiedad <code>processes</code> es un objeto donde cada clave es el nombre del proceso. Si un proceso no define <code>cwd</code>, McDis usa ese nombre como carpeta.</p>
-        <pre><code>{
+			<section id="config" class="section">
+				<h2>Configuracion</h2>
+				<p>
+					El archivo default es <code>config.json</code>. La propiedad
+					<code>processes</code> es un objeto donde cada clave es el nombre del proceso.
+					Si un proceso no define <code>cwd</code>, McDis usa ese nombre como carpeta.
+				</p>
+				<pre><code>{
   "$schema": "https://mjpr-3435.github.io/mcdis-node-recreation/schema/config.schema.json",
   "discord": {
     "tokenEnv": "DISCORD_TOKEN",
@@ -56,12 +70,16 @@
     }
   }
 }</code></pre>
-      </section>
+			</section>
 
-      <section id="plugins" class="section">
-        <h2>Plugins Por Proceso</h2>
-        <p>Los plugins viven en <code>&lt;cwd&gt;/.mdplugins</code>. Pueden ser archivos <code>.js</code>, <code>.mjs</code>, <code>.cjs</code>, <code>.ts</code>, o directorios con <code>package.json</code> y <code>main</code>.</p>
-        <pre><code>import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
+			<section id="plugins" class="section">
+				<h2>Plugins Por Proceso</h2>
+				<p>
+					Los plugins viven en <code>&lt;cwd&gt;/.mdplugins</code>. Pueden ser archivos
+					<code>.js</code>, <code>.mjs</code>, <code>.cjs</code>, <code>.ts</code>, o
+					directorios con <code>package.json</code> y <code>main</code>.
+				</p>
+				<pre><code>import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
 
 class AutoSavePlugin extends Plugin {
   name = 'auto-save';
@@ -76,12 +94,15 @@ class AutoSavePlugin extends Plugin {
 export async function load(context: PluginContext) {
   return new AutoSavePlugin(context);
 }</code></pre>
-      </section>
+			</section>
 
-      <section id="mods" class="section">
-        <h2>Mods Globales</h2>
-        <p>Los mods viven en <code>.mdmods</code>. Pueden acceder a <code>McDisApp</code>, escuchar eventos globales, registrar helpers e inyectar plugins en procesos.</p>
-        <pre><code>import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
+			<section id="mods" class="section">
+				<h2>Mods Globales</h2>
+				<p>
+					Los mods viven en <code>.mdmods</code>. Pueden acceder a <code>McDisApp</code>,
+					escuchar eventos globales, registrar helpers e inyectar plugins en procesos.
+				</p>
+				<pre><code>import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
 
 class BroadcastMod extends Mod {
   async onLoad() {
@@ -100,53 +121,73 @@ class BroadcastMod extends Mod {
 export async function load(context: ModContext) {
   return new BroadcastMod(context);
 }</code></pre>
-      </section>
+			</section>
 
-      <section id="api" class="section two-col">
-        <div>
-          <h2>APIs Principales</h2>
-          <ul>
-            <li><code>McDisApp</code>: procesos, mods, helpers, Discord y eventos globales.</li>
-            <li><code>MinecraftProcess</code>: proceso local, stdin, lifecycle y eventos.</li>
-            <li><code>Plugin</code>: extension por proceso.</li>
-            <li><code>Mod</code>: extension global.</li>
-          </ul>
-        </div>
-        <div>
-          <h2>Comandos</h2>
-          <ul>
-            <li><code>!!start smp</code></li>
-            <li><code>!!stop smp</code></li>
-            <li><code>!!restart smp</code></li>
-            <li><code>!!plugins-reload smp</code></li>
-            <li><code>!!mods-reload</code></li>
-          </ul>
-        </div>
-      </section>
+			<section id="api" class="section two-col">
+				<div>
+					<h2>APIs Principales</h2>
+					<ul>
+						<li>
+							<code>McDisApp</code>: procesos, mods, helpers, Discord y eventos
+							globales.
+						</li>
+						<li>
+							<code>MinecraftProcess</code>: proceso local, stdin, lifecycle y
+							eventos.
+						</li>
+						<li><code>Plugin</code>: extension por proceso.</li>
+						<li><code>Mod</code>: extension global.</li>
+					</ul>
+				</div>
+				<div>
+					<h2>Comandos</h2>
+					<ul>
+						<li><code>!!start smp</code></li>
+						<li><code>!!stop smp</code></li>
+						<li><code>!!restart smp</code></li>
+						<li><code>!!plugins-reload smp</code></li>
+						<li><code>!!mods-reload</code></li>
+					</ul>
+				</div>
+			</section>
 
-      <section id="events" class="section">
-        <h2>Eventos</h2>
-        <p><code>MinecraftProcess</code> y <code>McDisApp</code> son <code>EventEmitter</code>. Todo evento de un proceso se reemite en la app.</p>
-        <div class="cards">
-          <article>
-            <h3>Proceso</h3>
-            <p><code>process:started</code>, <code>process:stopped</code>, <code>console:line</code>, <code>discord:command</code>, <code>plugin:loaded</code>.</p>
-          </article>
-          <article>
-            <h3>Global</h3>
-            <p><code>app:ready</code>, <code>app:shutdown</code>, <code>mod:loaded</code>, <code>helper:registered</code>, <code>process:event</code>.</p>
-          </article>
-        </div>
-      </section>
+			<section id="events" class="section">
+				<h2>Eventos</h2>
+				<p>
+					<code>MinecraftProcess</code> y <code>McDisApp</code> son
+					<code>EventEmitter</code>. Todo evento de un proceso se reemite en la app.
+				</p>
+				<div class="cards">
+					<article>
+						<h3>Proceso</h3>
+						<p>
+							<code>process:started</code>, <code>process:stopped</code>,
+							<code>console:line</code>, <code>discord:command</code>,
+							<code>plugin:loaded</code>.
+						</p>
+					</article>
+					<article>
+						<h3>Global</h3>
+						<p>
+							<code>app:ready</code>, <code>app:shutdown</code>,
+							<code>mod:loaded</code>, <code>helper:registered</code>,
+							<code>process:event</code>.
+						</p>
+					</article>
+				</div>
+			</section>
 
-      <section id="schema" class="section">
-        <h2>JSON Schema</h2>
-        <p>Usa el schema publicado en GitHub Pages para autocompletado y validacion en VS Code u otros editores.</p>
-        <pre><code>{
+			<section id="schema" class="section">
+				<h2>JSON Schema</h2>
+				<p>
+					Usa el schema publicado en GitHub Pages para autocompletado y validacion en VS
+					Code u otros editores.
+				</p>
+				<pre><code>{
   "$schema": "https://mjpr-3435.github.io/mcdis-node-recreation/schema/config.schema.json"
 }</code></pre>
-        <p><a href="./schema/config.schema.json">Abrir schema local del sitio</a></p>
-      </section>
-    </main>
-  </body>
+				<p><a href="./schema/config.schema.json">Abrir schema local del sitio</a></p>
+			</section>
+		</main>
+	</body>
 </html>

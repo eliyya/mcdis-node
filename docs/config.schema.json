@@ -1,0 +1,169 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://mjpr-3435.github.io/mcdis-node-recreation/schema/config.schema.json",
+	"title": "McDis Node config",
+	"description": "Configuration schema for McDis Node Recreation.",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["discord"],
+	"properties": {
+		"$schema": {
+			"type": "string",
+			"description": "Optional JSON schema URL for editor validation."
+		},
+		"discord": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["panelChannelId"],
+			"properties": {
+				"tokenEnv": {
+					"type": "string",
+					"minLength": 1,
+					"default": "DISCORD_TOKEN",
+					"description": "Environment variable that contains the Discord bot token."
+				},
+				"panelChannelId": {
+					"type": "string",
+					"pattern": "^\\d+$",
+					"description": "Discord text channel ID used as the McDis panel."
+				},
+				"prefix": {
+					"type": "string",
+					"minLength": 1,
+					"default": "!!",
+					"description": "Command prefix used in the panel and expanded into process contexts."
+				},
+				"queue": {
+					"type": "object",
+					"additionalProperties": false,
+					"default": {},
+					"properties": {
+						"minIntervalMs": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 1200,
+							"description": "Minimum delay between Discord messages sent by the global queue."
+						},
+						"maxQueuedMessages": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 1000,
+							"description": "Maximum pending Discord messages before older messages are dropped."
+						},
+						"codeBlockLanguage": {
+							"type": "string",
+							"default": "md",
+							"description": "Language marker used in Discord code blocks."
+						}
+					}
+				}
+			}
+		},
+		"mods": {
+			"type": "object",
+			"additionalProperties": false,
+			"default": {
+				"enabled": true,
+				"directory": ".mdmods"
+			},
+			"properties": {
+				"enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether global mods are loaded."
+				},
+				"directory": {
+					"type": "string",
+					"minLength": 1,
+					"default": ".mdmods",
+					"description": "Directory where global mods are loaded from."
+				}
+			}
+		},
+		"processes": {
+			"type": "object",
+			"default": {},
+			"description": "Minecraft processes keyed by process name. The key becomes the process name.",
+			"propertyNames": {
+				"type": "string",
+				"minLength": 1,
+				"maxLength": 40,
+				"pattern": "^[\\w .-]+$"
+			},
+			"additionalProperties": {
+				"$ref": "#/$defs/process"
+			}
+		}
+	},
+	"$defs": {
+		"process": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["startCommand"],
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum": ["server", "network"],
+					"default": "server"
+				},
+				"cwd": {
+					"type": "string",
+					"minLength": 1,
+					"description": "Working directory. Defaults to the process key/name."
+				},
+				"startCommand": {
+					"description": "Command used to start the Minecraft process. Strings run through shell; arrays run without shell.",
+					"oneOf": [
+						{
+							"type": "string",
+							"minLength": 1
+						},
+						{
+							"type": "array",
+							"minItems": 1,
+							"items": {
+								"type": "string",
+								"minLength": 1
+							}
+						}
+					]
+				},
+				"stopCommand": {
+					"type": "string",
+					"minLength": 1,
+					"default": "stop"
+				},
+				"autoStart": {
+					"type": "boolean",
+					"default": false
+				},
+				"blacklist": {
+					"type": "array",
+					"default": [],
+					"items": {
+						"type": "string"
+					}
+				},
+				"plugins": {
+					"type": "object",
+					"additionalProperties": false,
+					"default": {
+						"enabled": true,
+						"directory": ".mdplugins"
+					},
+					"properties": {
+						"enabled": {
+							"type": "boolean",
+							"default": true
+						},
+						"directory": {
+							"type": "string",
+							"minLength": 1,
+							"default": ".mdplugins"
+						}
+					}
+				}
+			}
+		}
+	}
+}

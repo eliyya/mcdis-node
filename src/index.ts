@@ -1,33 +1,21 @@
-#!/usr/bin/env node
-import { parseArgs } from 'node:util';
-import { loadConfig } from './config.js';
-import { McDisApp } from './mcdis-app.js';
+export { loadConfig } from './config.js'
+export { DiscordMessageQueue } from './discord-message-queue.js'
+export { McDisApp } from './mcdis-app.js'
+export { MinecraftProcess } from './minecraft-process.js'
+export { Mod } from './mod.js'
+export { Plugin } from './plugin.js'
+export { ThreadManager } from './thread-manager.js'
 
-try {
-  process.loadEnvFile('.env');
-} catch (error) {
-  if (error instanceof Error && 'code' in error && error.code !== 'ENOENT') {
-    throw error;
-  }
-}
-
-const { values } = parseArgs({
-  options: {
-    config: {
-      type: 'string',
-      short: 'c',
-      default: 'config.json'
-    }
-  }
-});
-
-const configPath = values.config;
-const config = await loadConfig(configPath);
-const token = process.env[config.discord.tokenEnv];
-
-if (!token) {
-  throw new Error(`Missing Discord token. Set ${config.discord.tokenEnv} in the environment or .env file.`);
-}
-
-const app = new McDisApp(config);
-await app.run(token);
+export type { AppConfig, ProcessConfig } from './config.js'
+export type { ModContext, ModLoadFunction } from './mod.js'
+export type {
+	MultiProcessPluginRegistrationOptions,
+	ProcessPluginRegistrationOptions,
+} from './mcdis-app.js'
+export type { ProcessState } from './types.js'
+export type { PluginContext, PluginLoadFunction } from './plugin.js'
+export type {
+	RegisteredPluginEntrypoint,
+	RegisteredPluginFactory,
+	RegisteredPluginSource,
+} from './process-plugin-manager.js'

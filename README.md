@@ -11,7 +11,7 @@ Recreacion en Node.js 24, TypeScript y ESM de la parte esencial de McDis-RCON: l
 ## Configuracion rapida
 
 ```sh
-npm install
+pnpm install
 cp .env.example .env
 cp config.example.json config.json
 ```
@@ -26,28 +26,28 @@ Edita `config.json` para definir el canal panel y las instancias de Minecraft:
 
 ```json
 {
-  "discord": {
-    "tokenEnv": "DISCORD_TOKEN",
-    "panelChannelId": "123456789012345678",
-    "prefix": "!!"
-  },
-  "mods": {
-    "enabled": true,
-    "directory": ".mdmods"
-  },
-  "processes": {
-    "smp": {
-      "type": "server",
-      "startCommand": "java -Xms1G -Xmx1G -jar paper.jar nogui",
-      "stopCommand": "stop",
-      "autoStart": false,
-      "blacklist": [],
-      "plugins": {
-        "enabled": true,
-        "directory": ".mdplugins"
-      }
-    }
-  }
+	"discord": {
+		"tokenEnv": "DISCORD_TOKEN",
+		"panelChannelId": "123456789012345678",
+		"prefix": "!!"
+	},
+	"mods": {
+		"enabled": true,
+		"directory": ".mdmods"
+	},
+	"processes": {
+		"smp": {
+			"type": "server",
+			"startCommand": "java -Xms1G -Xmx1G -jar paper.jar nogui",
+			"stopCommand": "stop",
+			"autoStart": false,
+			"blacklist": [],
+			"plugins": {
+				"enabled": true,
+				"directory": ".mdplugins"
+			}
+		}
+	}
 }
 ```
 
@@ -56,8 +56,8 @@ Si no defines `cwd`, McDis usa el nombre del proceso como carpeta. Por ejemplo, 
 ## Uso
 
 ```sh
-npm run build
-npm start -- --config config.json
+pnpm build
+pnpm start -- --config config.json
 ```
 
 Referencia completa de API: [API.md](API.md). Documentacion web y schema: [docs/index.html](docs/index.html).
@@ -93,43 +93,43 @@ Cada plugin debe exportar una funcion asincrona `load(context)` que devuelve una
 Ejemplo `smp/.mdplugins/auto-save.ts`:
 
 ```ts
-import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
-import type { Message } from 'discord.js';
+import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin'
+import type { Message } from 'discord.js'
 
 class AutoSavePlugin extends Plugin {
-  name = 'auto-save';
+	name = 'auto-save'
 
-  async onLoad() {
-    this.context.sendLog('auto-save plugin loaded');
+	async onLoad() {
+		this.context.sendLog('auto-save plugin loaded')
 
-    this.listen('console:line', (line) => {
-      if (typeof line === 'string' && line.includes('joined the game')) {
-        this.context.execute('say Bienvenido al servidor!');
-      }
-    });
-  }
+		this.listen('console:line', (line) => {
+			if (typeof line === 'string' && line.includes('joined the game')) {
+				this.context.execute('say Bienvenido al servidor!')
+			}
+		})
+	}
 
-  async onConsoleLine(line: string) {
-    if (line.includes('Done')) {
-      this.context.execute('save-on');
-    }
-  }
+	async onConsoleLine(line: string) {
+		if (line.includes('Done')) {
+			this.context.execute('save-on')
+		}
+	}
 
-  async onDiscordMessage(message: Message, command: string) {
-    if (command === 'save-now') {
-      this.context.execute('save-all flush');
-      this.context.sendLog(`Manual save requested by ${message.author.tag}`);
-      return true;
-    }
-  }
+	async onDiscordMessage(message: Message, command: string) {
+		if (command === 'save-now') {
+			this.context.execute('save-all flush')
+			this.context.sendLog(`Manual save requested by ${message.author.tag}`)
+			return true
+		}
+	}
 
-  async onUnload() {
-    this.context.sendLog('auto-save plugin unloaded');
-  }
+	async onUnload() {
+		this.context.sendLog('auto-save plugin unloaded')
+	}
 }
 
 export async function load(context: PluginContext) {
-  return new AutoSavePlugin(context);
+	return new AutoSavePlugin(context)
 }
 ```
 
@@ -149,9 +149,9 @@ smp/.mdplugins/welcome/
 
 ```json
 {
-  "name": "welcome",
-  "type": "module",
-  "main": "./src/index.ts"
+	"name": "welcome",
+	"type": "module",
+	"main": "./src/index.ts"
 }
 ```
 
@@ -192,37 +192,40 @@ Eventos emitidos por McDis:
 Ejemplo de comunicacion entre plugins:
 
 ```ts
-import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
+import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin'
 
 class BroadcasterPlugin extends Plugin {
-  async onConsoleLine(line: string) {
-    if (line.includes('Done')) {
-      this.process.emit('server:ready', { process: this.context.name });
-    }
-  }
+	async onConsoleLine(line: string) {
+		if (line.includes('Done')) {
+			this.process.emit('server:ready', { process: this.context.name })
+		}
+	}
 }
 
 export async function load(context: PluginContext) {
-  return new BroadcasterPlugin(context);
+	return new BroadcasterPlugin(context)
 }
 ```
 
 ```ts
-import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
+import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin'
 
 class ListenerPlugin extends Plugin {
-  async onLoad() {
-    this.listen('server:ready', (payload) => {
-      this.context.sendLog(`Evento recibido: ${JSON.stringify(payload)}`);
-    });
+	async onLoad() {
+		this.listen('server:ready', (payload) => {
+			this.context.sendLog(`Evento recibido: ${JSON.stringify(payload)}`)
+		})
 
-    const processNames = this.app.getProcesses().map((process) => process.name).join(', ');
-    this.context.sendLog(`Procesos cargados: ${processNames}`);
-  }
+		const processNames = this.app
+			.getProcesses()
+			.map((process) => process.name)
+			.join(', ')
+		this.context.sendLog(`Procesos cargados: ${processNames}`)
+	}
 }
 
 export async function load(context: PluginContext) {
-  return new ListenerPlugin(context);
+	return new ListenerPlugin(context)
 }
 ```
 
@@ -240,10 +243,10 @@ Se configuran en la raiz de `config.json`:
 
 ```json
 {
-  "mods": {
-    "enabled": true,
-    "directory": ".mdmods"
-  }
+	"mods": {
+		"enabled": true,
+		"directory": ".mdmods"
+	}
 }
 ```
 
@@ -251,9 +254,9 @@ Igual que los plugins, pueden ser archivos `.js`, `.mjs`, `.cjs`, `.ts` o direct
 
 ```json
 {
-  "name": "process-coordinator",
-  "type": "module",
-  "main": "./src/index.ts"
+	"name": "process-coordinator",
+	"type": "module",
+	"main": "./src/index.ts"
 }
 ```
 
@@ -273,33 +276,36 @@ index.cjs
 Ejemplo `.mdmods/process-coordinator.ts`:
 
 ```ts
-import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
-import type { MinecraftProcess } from 'mcdis-node-recreation/plugin';
+import { Mod, type ModContext } from 'mcdis-node-recreation/mod'
+import type { MinecraftProcess } from 'mcdis-node-recreation/plugin'
 
 class ProcessCoordinator extends Mod {
-  name = 'process-coordinator';
+	name = 'process-coordinator'
 
-  async onLoad() {
-    this.context.sendLog('Mod global cargado.');
+	async onLoad() {
+		this.context.sendLog('Mod global cargado.')
 
-    this.listen('process:started', (process) => {
-      const minecraftProcess = process as MinecraftProcess;
-      this.context.sendLog(`${minecraftProcess.name} inicio.`);
-    });
+		this.listen('process:started', (process) => {
+			const minecraftProcess = process as MinecraftProcess
+			this.context.sendLog(`${minecraftProcess.name} inicio.`)
+		})
 
-    this.listen('server:ready', (payload) => {
-      this.context.sendLog(`Evento global server:ready: ${JSON.stringify(payload)}`);
-    });
-  }
+		this.listen('server:ready', (payload) => {
+			this.context.sendLog(`Evento global server:ready: ${JSON.stringify(payload)}`)
+		})
+	}
 
-  async onReady() {
-    const names = this.app.getProcesses().map((process) => process.name).join(', ');
-    this.context.sendLog(`Procesos disponibles: ${names}`);
-  }
+	async onReady() {
+		const names = this.app
+			.getProcesses()
+			.map((process) => process.name)
+			.join(', ')
+		this.context.sendLog(`Procesos disponibles: ${names}`)
+	}
 }
 
 export async function load(context: ModContext) {
-  return new ProcessCoordinator(context);
+	return new ProcessCoordinator(context)
 }
 ```
 
@@ -321,57 +327,57 @@ Ejemplo:
 
 ```json
 {
-  "name": "shared-welcome",
-  "type": "module",
-  "main": "./src/mod.ts"
+	"name": "shared-welcome",
+	"type": "module",
+	"main": "./src/mod.ts"
 }
 ```
 
 `src/mod.ts`:
 
 ```ts
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
-import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
+import { Mod, type ModContext } from 'mcdis-node-recreation/mod'
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 class SharedWelcomeMod extends Mod {
-  name = 'shared-welcome';
+	name = 'shared-welcome'
 
-  async onLoad() {
-    const unregister = await this.app.registerProcessPluginForMany({
-      file: path.join(dirname, 'process-plugin.ts'),
-      name: 'shared-welcome-process-plugin'
-    });
+	async onLoad() {
+		const unregister = await this.app.registerProcessPluginForMany({
+			file: path.join(dirname, 'process-plugin.ts'),
+			name: 'shared-welcome-process-plugin',
+		})
 
-    this.addCleanup(unregister);
-    this.context.sendLog('Shared welcome process plugin registered.');
-  }
+		this.addCleanup(unregister)
+		this.context.sendLog('Shared welcome process plugin registered.')
+	}
 }
 
 export async function load(context: ModContext) {
-  return new SharedWelcomeMod(context);
+	return new SharedWelcomeMod(context)
 }
 ```
 
 `src/process-plugin.ts`:
 
 ```ts
-import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
+import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin'
 
 class SharedWelcomeProcessPlugin extends Plugin {
-  name = 'shared-welcome-process-plugin';
+	name = 'shared-welcome-process-plugin'
 
-  async onConsoleLine(line: string) {
-    if (line.includes('joined the game')) {
-      this.context.execute('say Bienvenido!');
-    }
-  }
+	async onConsoleLine(line: string) {
+		if (line.includes('joined the game')) {
+			this.context.execute('say Bienvenido!')
+		}
+	}
 }
 
 export async function load(context: PluginContext) {
-  return new SharedWelcomeProcessPlugin(context);
+	return new SharedWelcomeProcessPlugin(context)
 }
 ```
 
@@ -381,51 +387,51 @@ Tambien puedes registrar en un solo proceso:
 
 ```ts
 const unregister = await this.app.registerProcessPlugin({
-  processName: 'smp',
-  file: path.join(dirname, 'process-plugin.ts'),
-  name: 'shared-welcome-smp'
-});
+	processName: 'smp',
+	file: path.join(dirname, 'process-plugin.ts'),
+	name: 'shared-welcome-smp',
+})
 
-this.addCleanup(unregister);
+this.addCleanup(unregister)
 ```
 
 Tambien puedes inyectar una instancia de `Plugin` directamente, sin usar un archivo:
 
 ```ts
-import { Mod, type ModContext } from 'mcdis-node-recreation/mod';
-import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin';
+import { Mod, type ModContext } from 'mcdis-node-recreation/mod'
+import { Plugin, type PluginContext } from 'mcdis-node-recreation/plugin'
 
 class InlineWelcomePlugin extends Plugin {
-  name = 'inline-welcome';
+	name = 'inline-welcome'
 
-  async onConsoleLine(line: string) {
-    if (line.includes('joined the game')) {
-      this.context.execute('say Bienvenido desde un plugin inyectado!');
-    }
-  }
+	async onConsoleLine(line: string) {
+		if (line.includes('joined the game')) {
+			this.context.execute('say Bienvenido desde un plugin inyectado!')
+		}
+	}
 }
 
 class InlinePluginMod extends Mod {
-  async onLoad() {
-    const process = this.app.getProcess('smp');
-    if (!process) {
-      return;
-    }
+	async onLoad() {
+		const process = this.app.getProcess('smp')
+		if (!process) {
+			return
+		}
 
-    const plugin = new InlineWelcomePlugin(process.createPluginContext());
+		const plugin = new InlineWelcomePlugin(process.createPluginContext())
 
-    const unregister = await this.app.registerProcessPlugin({
-      processName: 'smp',
-      plugin,
-      name: plugin.name
-    });
+		const unregister = await this.app.registerProcessPlugin({
+			processName: 'smp',
+			plugin,
+			name: plugin.name,
+		})
 
-    this.addCleanup(unregister);
-  }
+		this.addCleanup(unregister)
+	}
 }
 
 export async function load(context: ModContext) {
-  return new InlinePluginMod(context);
+	return new InlinePluginMod(context)
 }
 ```
 
@@ -433,11 +439,11 @@ Para registrar el mismo tipo de plugin en varios procesos, usa una factory. McDi
 
 ```ts
 const unregister = await this.app.registerProcessPluginForMany({
-  plugin: (context: PluginContext) => new InlineWelcomePlugin(context),
-  name: 'inline-welcome'
-});
+	plugin: (context: PluginContext) => new InlineWelcomePlugin(context),
+	name: 'inline-welcome',
+})
 
-this.addCleanup(unregister);
+this.addCleanup(unregister)
 ```
 
 Eventos globales propios:
@@ -455,25 +461,25 @@ Los mods pueden publicar helpers compartidos en `McDisApp` para que otros mods y
 
 ```ts
 type BroadcastHelper = {
-  broadcast: (message: string) => void;
-};
+	broadcast: (message: string) => void
+}
 
 const unregister = this.app.registerHelper<BroadcastHelper>('broadcast', {
-  broadcast: (message) => {
-    for (const process of this.app.getProcesses()) {
-      process.execute(`say ${message}`);
-    }
-  }
-});
+	broadcast: (message) => {
+		for (const process of this.app.getProcesses()) {
+			process.execute(`say ${message}`)
+		}
+	},
+})
 
-this.addCleanup(unregister);
+this.addCleanup(unregister)
 ```
 
 Otro mod o plugin puede leerlo:
 
 ```ts
-const broadcast = this.app.getHelper<BroadcastHelper>('broadcast');
-broadcast?.broadcast('Mensaje global');
+const broadcast = this.app.getHelper<BroadcastHelper>('broadcast')
+broadcast?.broadcast('Mensaje global')
 ```
 
 Guarda el cleanup con `this.addCleanup(unregister)` para que el helper se quite antes de `!!mods-reload` y se registre nuevamente en `onLoad()`.
@@ -490,5 +496,5 @@ La consola se envia mediante una cola global. Cada envio:
 
 - Respeta `discord.queue.minIntervalMs`.
 - Divide logs largos para quedar debajo del maximo de Discord.
-- Envuelve el contenido en bloques de codigo: ```` ```md ... ``` ````.
+- Envuelve el contenido en bloques de codigo: ` ```md ... ``` `.
 - Sanitiza backticks y codigos ANSI para que la consola no rompa Markdown.

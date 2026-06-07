@@ -1,50 +1,61 @@
 {
-  "name": "mcdis",
-  "version": "1.0.0",
-  "description": "mcdis is a node-based application that allows you to stream a Minecraft server console to Discord, enabling remote and efficient server management through a Discord bot. inspired by McDis-RCON",
-  "type": "module",
-  "main": "dist/index.js",
-  "exports": {
-    ".": "./dist/index.js",
-    "./plugin": {
-      "types": "./dist/plugin.d.ts",
-      "default": "./dist/plugin.js"
-    },
-    "./mod": {
-      "types": "./dist/mod.d.ts",
-      "default": "./dist/mod.js"
-    }
-  },
-  "bin": {
-    "mcdis-node": "dist/index.js"
-  },
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsx src/index.ts",
-    "start": "node dist/index.js",
-    "lint": "tsc -p tsconfig.json --noEmit"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eliyya/mcdis-node.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/eliyya/mcdis-node/issues"
-  },
-  "homepage": "https://github.com/eliyya/mcdis-node#readme",
-  "engines": {
-    "node": ">=24"
-  },
-  "dependencies": {
-    "discord.js": "^14.25.1",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@types/node": "^24.10.1",
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
-  }
+	"name": "mcdis",
+	"version": "1.0.0",
+	"description": "mcdis is a node-based application that allows you to stream a Minecraft server console to Discord, enabling remote and efficient server management through a Discord bot. inspired by McDis-RCON",
+	"type": "module",
+	"main": "dist/index.js",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./plugin": {
+			"types": "./dist/plugin.d.ts",
+			"default": "./dist/plugin.js"
+		},
+		"./mod": {
+			"types": "./dist/mod.d.ts",
+			"default": "./dist/mod.js"
+		}
+	},
+	"bin": {
+		"mcdis-node": "dist/cli.js"
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"dev": "tsx src/cli.ts",
+		"start": "node dist/cli.js",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"lint": "eslint .",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
+	},
+	"packageManager": "pnpm@10.23.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/eliyya/mcdis-node.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/eliyya/mcdis-node/issues"
+	},
+	"homepage": "https://github.com/eliyya/mcdis-node#readme",
+	"engines": {
+		"node": ">=24"
+	},
+	"dependencies": {
+		"discord.js": "^14.25.1",
+		"zod": "^4.1.13"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/node": "^24.10.1",
+		"eslint": "^10.4.1",
+		"prettier": "^3.7.4",
+		"tsx": "^4.20.6",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.60.1"
+	}
 }
